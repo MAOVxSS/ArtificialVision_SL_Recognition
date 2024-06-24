@@ -1,0 +1,12 @@
+# Ignorar carpetas y archivos grandes
+Model/Generate_Models/
+*.keras
+*.h5
+
+# Ignorar directorios de caché y archivos temporales
+__pycache__/
+*.pyc
+.DS_Store
+
+# Ignorar entornos virtuales
+.venv/
