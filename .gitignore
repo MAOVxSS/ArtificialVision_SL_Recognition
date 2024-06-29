@@ -1,7 +1,11 @@
 # Ignorar carpetas y archivos grandes
-Model/Generate_Models/
+Model/Generated_Models/
 *.keras
 *.h5
+
+Frame_Actions/
+Dynamic_Data/
+Static_Data/
 
 # Ignorar directorios de caché y archivos temporales
 __pycache__/

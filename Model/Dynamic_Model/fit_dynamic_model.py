@@ -3,7 +3,7 @@ import numpy as np
 from Model.Dynamic_Model.create_dynamic_model import NUM_EPOCH, get_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
-from Utils.utils import get_actions, get_sequences_and_labels
+from Utils.dynamic_model_utils import get_actions, get_sequences_and_labels
 from Constants.constants import *
 
 

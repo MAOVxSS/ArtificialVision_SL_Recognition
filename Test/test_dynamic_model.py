@@ -1,6 +1,6 @@
 from mediapipe.python.solutions.hands import Hands
 from tensorflow.keras.models import load_model
-from Utils.utils import *
+from Utils.dynamic_model_utils import *
 from Constants.constants import *
 
 
@@ -52,7 +52,7 @@ def evaluate_model(model, threshold=0.7):
 
 
 if __name__ == "__main__":
-    # Se carga el modelO
+    # Se carga qel modelO
     model_path = os.path.join(DYNAMIC_MODEL_DIR, MODEL_NAME)
     lstm_model = load_model(model_path)  # Carga el modelo entrenado desde el archivo
     evaluate_model(lstm_model)  # Inicia la evaluación del modelo

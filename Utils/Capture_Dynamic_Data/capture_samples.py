@@ -6,7 +6,7 @@ Se guarda la grabación en 'frames' dentro de la carpeta seleccionada
 """
 
 from mediapipe.python.solutions.hands import Hands
-from Utils.utils import *
+from Utils.dynamic_model_utils import *
 from Constants.constants import FONT, FONT_POS, FONT_SIZE, FRAME_ACTIONS_PATH, id_cam
 
 

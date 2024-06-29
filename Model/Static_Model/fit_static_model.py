@@ -4,7 +4,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 
 class fit_static_model:
     @staticmethod
-    def train_model(model, data_dir, batch_size=32, epochs=10, model_path='static_model.keras'):
+    def train_model(model, data_dir, batch_size=32, epochs=10, model_path='best_static_model.keras'):
         # Generador de datos de entrenamiento con aumento de datos y reescalado
         train_datagen = ImageDataGenerator(
             rescale=1. / 255,  # Reescalar los valores de píxeles de [0, 255] a [0, 1]

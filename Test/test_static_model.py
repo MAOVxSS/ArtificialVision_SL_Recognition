@@ -4,7 +4,7 @@ import numpy as np
 import math
 import os
 import keras
-from Utils.utils import binarize_img  # Importar función personalizada para binarizar la imagen
+from Utils.image_utils import preprocess_image, binarize_img
 from Constants.constants import id_cam, labels, STATIC_MODEL_DIR
 
 # Inicializar Mediapipe Hands
@@ -52,25 +52,7 @@ while True:
 
             # Recortar y redimensionar la imagen de la mano
             img_hand = img[y_min:y_max, x_min:x_max]
-            img_white = np.ones((img_size, img_size, 3), np.uint8) * 255  # Crear un lienzo blanco
-
-            h, w, _ = img_hand.shape
-            aspect_ratio = h / w
-
-            if aspect_ratio > 1:
-                # Redimensionar si la altura es mayor que el ancho
-                k = img_size / h
-                new_width = math.ceil(k * w)
-                resized_img = cv2.resize(img_hand, (new_width, img_size))
-                width_margin = math.ceil((img_size - new_width) / 2)
-                img_white[:, width_margin:new_width + width_margin] = resized_img
-            else:
-                # Redimensionar si el ancho es mayor que la altura
-                k = img_size / w
-                new_height = math.ceil(k * h)
-                resized_img = cv2.resize(img_hand, (img_size, new_height))
-                height_margin = math.ceil((img_size - new_height) / 2)
-                img_white[height_margin:new_height + height_margin, :] = resized_img
+            img_white = preprocess_image(img_hand, img_size)
 
             # Convertir a HSV
             hsv_img = cv2.cvtColor(img_white, cv2.COLOR_RGB2HSV)

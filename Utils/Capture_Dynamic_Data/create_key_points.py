@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import cv2
 from mediapipe.python.solutions.hands import Hands
-from Utils.utils import get_keypoints, insert_keypoints_sequence, mediapipe_detection
+from Utils.dynamic_model_utils import get_keypoints, insert_keypoints_sequence, mediapipe_detection
 from Constants.constants import FRAME_ACTIONS_PATH, DYNAMIC_DATA_DIR
 
 

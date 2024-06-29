@@ -5,21 +5,27 @@ import cv2
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Raíz del proyecto
 # Dynamic Model----------
 DYNAMIC_DATA_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Dynamic_Data"))
-DYNAMIC_MODEL_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Model", "Generate_Models"))
+DYNAMIC_MODEL_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Model", "Generated_Models"))
 FRAME_ACTIONS_PATH = os.path.abspath(os.path.join(ROOT_DIR, "Frame_Actions"))
 # ------------------------
 # Static Model---------
 STATIC_DATA_PROCESSED_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data",
                                                          "Processed"))
 STATIC_DATA_WITH_OUT_P_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data",
-                                                         "With_Out_Processed"))
-STATIC_MODEL_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Model", "Generate_Models"))
-# ------------------------
+                                                          "With_Out_Processed"))
+STATIC_MODEL_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Model", "Generated_Models"))
+STATIC_MODEL_H5_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data", "Data_H5"))
+STATIC_MODEL_v3_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data", "KeyPoints", "keypoints.csv"))
+STATIC_MODEL_v3_LABELS_DIR = os.path.abspath(
+    os.path.join(ROOT_DIR, "Static_Data", "KeyPoints", "keypoints_labels.csv"))
+STATIC_MODEL_v3_TFLITE = os.path.abspath(
+    os.path.join(ROOT_DIR, "Model", "Generated_Models", "keypoint_classifier.tflite"))
 
+# ------------------------
 # VARIABLES |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # Dynamic_Model-----------
 MAX_LENGTH_FRAMES = 15  # Cantidad de frames para entrenamiento dinámico
-LENGTH_KEYPOINTS = 63   # Longitud de los keypoints
+LENGTH_KEYPOINTS = 63  # Longitud de los keypoints
 MIN_LENGTH_FRAMES = 5
 MODEL_NAME = f"actions_{MAX_LENGTH_FRAMES}.keras"
 # ------------------------

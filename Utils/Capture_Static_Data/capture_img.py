@@ -14,7 +14,7 @@ mp_drawing = mp.solutions.drawing_utils  # Utilidades para dibujar las marcas de
 id_camara = cv2.VideoCapture(id_cam)
 offset = 20  # Desplazamiento para ajustar la caja delimitadora
 img_out_size = 224  # Tamaño de la imagen de salida
-dir = os.path.join(STATIC_DATA_WITH_OUT_P_DIR, "y")  # Cambiar la letra a guardar
+dir = os.path.join(STATIC_DATA_WITH_OUT_P_DIR, "A")  # Cambiar la letra a guardar
 img_count = 0  # Contador para las imágenes guardadas
 
 while True:
