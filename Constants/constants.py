@@ -15,7 +15,7 @@ STATIC_DATA_WITH_OUT_P_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data
                                                           "With_Out_Processed"))
 STATIC_MODEL_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Model", "Generated_Models"))
 STATIC_MODEL_H5_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data", "Data_H5"))
-STATIC_MODEL_v3_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data", "KeyPoints", "keypoints.csv"))
+STATIC_MODEL_v3_KEYPOINTS_DIR = os.path.abspath(os.path.join(ROOT_DIR, "Static_Data", "KeyPoints", "keypoints.csv"))
 STATIC_MODEL_v3_LABELS_DIR = os.path.abspath(
     os.path.join(ROOT_DIR, "Static_Data", "KeyPoints", "keypoints_labels.csv"))
 STATIC_MODEL_v3_TFLITE = os.path.abspath(
