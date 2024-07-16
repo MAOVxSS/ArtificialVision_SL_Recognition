@@ -30,9 +30,10 @@ def analyze_h5_keypoints(h5_path):
 
 # Función para mostrar información extra sobre el entrenamiento de los modelos
 def plot_history(history):
+    plt.figure(figsize=(18, 6))
+
     # Graficar la precisión
-    plt.figure(figsize=(12, 6))
-    plt.subplot(1, 2, 1)
+    plt.subplot(1, 3, 1)
     plt.plot(history.history['accuracy'], label='Entrenamiento')
     plt.plot(history.history['val_accuracy'], label='Validación')
     plt.title('Precisión a través de las épocas')
@@ -41,7 +42,7 @@ def plot_history(history):
     plt.legend()
 
     # Graficar la pérdida
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 3, 2)
     plt.plot(history.history['loss'], label='Entrenamiento')
     plt.plot(history.history['val_loss'], label='Validación')
     plt.title('Pérdida a través de las épocas')
@@ -49,4 +50,17 @@ def plot_history(history):
     plt.ylabel('Pérdida')
     plt.legend()
 
+    # Comparación de métricas
+    plt.subplot(1, 3, 3)
+    epochs = range(1, len(history.history['accuracy']) + 1)
+    plt.plot(epochs, history.history['accuracy'], label='Precisión - Entrenamiento', linestyle='--')
+    plt.plot(epochs, history.history['val_accuracy'], label='Precisión - Validación', linestyle='-')
+    plt.plot(epochs, history.history['loss'], label='Pérdida - Entrenamiento', linestyle='--')
+    plt.plot(epochs, history.history['val_loss'], label='Pérdida - Validación', linestyle='-')
+    plt.title('Comparación de Métricas')
+    plt.xlabel('Épocas')
+    plt.ylabel('Valor')
+    plt.legend()
+
+    plt.tight_layout()
     plt.show()

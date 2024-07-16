@@ -1,6 +1,6 @@
 from Model.Static_Model.create_static_model import *
 from Model.Static_Model.fit_static_model import *
-from Constants.constants import STATIC_DATA_PROCESSED_DIR
+from Constants.constants import static_data_processed_dir
 from Utils.visualization_utils import plot_history
 
 if __name__ == "__main__":
@@ -9,7 +9,7 @@ if __name__ == "__main__":
     model = create_static_model.build_model()
 
     # Entrenar el modelo
-    history = fit_static_model.train_model(model, STATIC_DATA_PROCESSED_DIR)
+    history = fit_static_model.train_model(model, static_data_processed_dir)
 
     # Guardar el modelo entrenado
     model.save('final_static_model.keras', save_format='keras')

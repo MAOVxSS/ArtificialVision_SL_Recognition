@@ -1,20 +1,20 @@
 import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
-from Constants.constants import STATIC_MODEL_v3_KEYPOINTS_DIR, DYNAMIC_MODEL_DIR
+from Constants.constants import static_model_v3_keypoints_dir, dynamic_model_dir
 from Utils.visualization_utils import plot_history
 import os
 
 # Configuración
 RANDOM_SEED = 42
 # Define las rutas para los datos y el modelo
-model_save_path = os.path.join(DYNAMIC_MODEL_DIR, 'static_keypoint.keras')
+model_save_path = os.path.join(dynamic_model_dir, 'static_keypoint.keras')
 NUM_CLASSES = 21  # Letras
 
 # Lectura de datos
-X_dataset = np.loadtxt(STATIC_MODEL_v3_KEYPOINTS_DIR, delimiter=',', dtype='float32',
+X_dataset = np.loadtxt(static_model_v3_keypoints_dir, delimiter=',', dtype='float32',
                        usecols=list(range(1, (21 * 2) + 1)))
-y_dataset = np.loadtxt(STATIC_MODEL_v3_KEYPOINTS_DIR, delimiter=',', dtype='int32', usecols=(0))
+y_dataset = np.loadtxt(static_model_v3_keypoints_dir, delimiter=',', dtype='int32', usecols=(0))
 
 # Verificar el balance de los datos
 print("Distribución de las etiquetas en el conjunto de datos:")

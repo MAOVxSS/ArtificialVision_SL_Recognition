@@ -3,10 +3,10 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import mediapipe as mp
-from Constants.constants import STATIC_MODEL_v3_LABELS_DIR, id_cam
+from Constants.constants import static_model_v3_labels_dir, id_cam
 
 # Cargar el archivo de etiquetas predefinido
-labels_df = pd.read_csv(STATIC_MODEL_v3_LABELS_DIR, header=None, index_col=0)
+labels_df = pd.read_csv(static_model_v3_labels_dir, header=None, index_col=0)
 labels_dict = labels_df[1].to_dict()
 
 # Inicializar MediaPipe Hands

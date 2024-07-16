@@ -1,53 +1,85 @@
 import os
 import numpy as np
-from Model.Dynamic_Model.create_dynamic_model import NUM_EPOCH, get_model
+import pandas as pd
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
-from Utils.dynamic_model_utils import get_actions, get_sequences_and_labels
-from Constants.constants import *
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
+from tensorflow.keras.regularizers import l2
+from Constants.constants import dynamic_data_dir, dynamic_model_dir, dynamic_model_name
+from Utils.visualization_utils import plot_history
+
+# Configuración
+num_epoch = 100  # Número de épocas para entrenar el modelo
+batch_size = 64  # Muestras por iteración
+max_length_frames = 15  # Cantidad de frames maxima para entrenamiento
+length_keypoints = 63  # Longitud de los keypoints
 
 
-# from keras.callbacks import EarlyStopping
+# Crea y compila el modelo dinámico
+def get_model(max_length_frames, output_length: int):
+    model = Sequential()
+    model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(max_length_frames, length_keypoints),
+                   kernel_regularizer=l2(0.001)))
+    model.add(LSTM(128, return_sequences=True, activation='relu', kernel_regularizer=l2(0.001)))
+    model.add(LSTM(128, return_sequences=False, activation='relu', kernel_regularizer=l2(0.001)))
+    model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.001)))
+    model.add(Dense(64, activation='relu', kernel_regularizer=l2(0.001)))
+    model.add(Dense(32, activation='relu', kernel_regularizer=l2(0.001)))
+    model.add(Dense(output_length, activation='softmax'))
+    model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    return model
 
-def training_model(data_path, model_path):
-    # Obtiene las acciones (letras) a predecir desde la ruta de datos
-    actions = get_actions(data_path)
 
-    # Obtiene las secuencias y las etiquetas correspondientes
-    sequences, labels = get_sequences_and_labels(actions, data_path)
+# Entrena el modelo dinámico
+def training_model(data_path, dynamic_model_path):
+    actions = [os.path.splitext(action)[0] for action in os.listdir(data_path) if os.path.splitext(action)[1] == ".h5"]
+    sequences, labels = [], []
 
-    # Rellena las secuencias para que todas tengan la misma longitud
-    sequences = pad_sequences(sequences, maxlen=MAX_LENGTH_FRAMES, padding='post', truncating='post', dtype='float32')
+    for label, action in enumerate(actions):
+        hdf_path = os.path.join(data_path, f"{action}.h5")
+        data = pd.read_hdf(hdf_path, key='data')
+        for _, data_filtered in data.groupby('sample'):
+            sequences.append([fila['keypoints'] for _, fila in data_filtered.iterrows()])
+            labels.append(label)
 
-    # Convierte las secuencias y etiquetas en arrays de numpy
-    X = np.array(sequences)
+    sequences = pad_sequences(sequences, maxlen=max_length_frames, padding='post', truncating='post', dtype='float32')
+    x = np.array(sequences)
     y = to_categorical(labels).astype(int)
 
-    # Obtiene el modelo con la cantidad de acciones como salida
-    model = get_model(len(actions))
+    print("Distribución de las etiquetas en el conjunto de datos:")
+    print(np.unique(labels, return_counts=True))
 
-    # Definición de parada temprana (comentado)
-    # early_stopping = EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.80)
 
-    # Entrena el modelo
-    model.fit(X, y, epochs=NUM_EPOCH)
-    # model.fit(X, y, epochs=NUM_EPOCH, callbacks=[early_stopping])
+    model = get_model(max_length_frames, len(actions))
 
-    # Muestra un resumen del modelo
-    model.summary()
+    cp_callback = ModelCheckpoint(dynamic_model_path, verbose=1, save_weights_only=False, save_best_only=True)
+    es_callback = EarlyStopping(patience=20, verbose=1, restore_best_weights=True)
+    tensorboard_callback = TensorBoard(log_dir='./logs')
 
-    # Guarda el modelo entrenado
-    model.save(model_path)
+    history = model.fit(x_train, y_train, epochs=num_epoch, batch_size=batch_size, validation_data=(x_test, y_test),
+                        callbacks=[cp_callback, es_callback, tensorboard_callback])
+
+    val_loss, val_acc = model.evaluate(x_test, y_test, batch_size=batch_size)
+    print(f'Validation Loss: {val_loss}, Validation Accuracy: {val_acc}')
+
+    model.save(dynamic_model_path)
+    print(f'Model saved to {dynamic_model_path}')
+
+    if os.path.exists(dynamic_model_path):
+        print(f"Model successfully saved at {dynamic_model_path}")
+    else:
+        print("Model saving failed")
+
+    plot_history(history)
 
 
 if __name__ == "__main__":
-    # Define las rutas para los datos y el modelo
-    model_path = os.path.join(DYNAMIC_MODEL_DIR, MODEL_NAME)
-
-    # Verifica si la ruta de los datos existe
-    if not os.path.exists(DYNAMIC_DATA_DIR):
-        print(f"Error: the path {DYNAMIC_DATA_DIR} does not exist.")
+    model_path = os.path.join(dynamic_model_dir, dynamic_model_name)
+    if not os.path.exists(dynamic_data_dir):
+        print(f"Error: the path {dynamic_data_dir} does not exist.")
         exit(1)
-
-    # Llama a la función de entrenamiento del modelo
-    training_model(DYNAMIC_DATA_DIR, model_path)
+    training_model(dynamic_data_dir, model_path)

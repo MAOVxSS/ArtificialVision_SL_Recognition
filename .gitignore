@@ -3,7 +3,7 @@ Model/Generated_Models/
 *.keras
 *.h5
 
-Frame_Actions/
+Dynamic_Data/Frame_Actions/
 Dynamic_Data/
 Static_Data/
 

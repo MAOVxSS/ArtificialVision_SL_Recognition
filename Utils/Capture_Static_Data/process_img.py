@@ -1,12 +1,12 @@
 import cv2
 import os
 from Utils.image_utils import binarize_img
-from Constants.constants import STATIC_DATA_WITH_OUT_P_DIR, STATIC_DATA_PROCESSED_DIR
+from Constants.constants import static_data_with_out_p_dir, static_data_processed_dir
 
 # Carpeta con las imágenes capturadas sin modificaciones
-dir = os.path.join(STATIC_DATA_WITH_OUT_P_DIR, "a")  # Cambiar la letra
+dir = os.path.join(static_data_with_out_p_dir, "a")  # Cambiar la letra
 # Carpeta para las imágenes preprocesadas (binarizadas)
-preprocessed_dir = os.path.join(STATIC_DATA_PROCESSED_DIR, "a")  # Cambiar la letra
+preprocessed_dir = os.path.join(static_data_processed_dir, "a")  # Cambiar la letra
 
 # Verificar si la carpeta para las imágenes preprocesadas existe, y si no, crearla
 if not os.path.exists(preprocessed_dir):

@@ -1,16 +1,21 @@
-from mediapipe.python.solutions.hands import Hands
+import os
+import numpy as np
+import cv2
+from mediapipe.python.solutions.hands import Hands, HAND_CONNECTIONS
+from mediapipe.python.solutions.drawing_utils import draw_landmarks, DrawingSpec
 from tensorflow.keras.models import load_model
-from Utils.dynamic_model_utils import *
-from Constants.constants import *
+from Utils.image_utils import mediapipe_detection
+from Constants.constants import dynamic_data_dir, dynamic_model_dir, id_cam, dynamic_model_name
 
-
-def evaluate_model(model, threshold=0.7):
+# Función para probar el modelo dinámico
+def evaluate_dynamic_model(model, threshold=0.7):
     # Inicialización de variables
-    count_frame = 0
-    repe_sent = 1
+    max_length_frames = 15  # Cantidad de frames maxima
     keypoint_sequence, sentence = [], []
-    actions = get_actions(DYNAMIC_DATA_DIR)  # Obtiene las acciones posibles desde la ruta de datos
+    actions = [os.path.splitext(action)[0] for action in os.listdir(dynamic_data_dir) if
+               os.path.splitext(action)[1] == ".h5"]  # Obtiene las acciones posibles desde la ruta de datos
 
+    # Inicializa el modelo de MediaPipe Hands
     with Hands() as hands_model:
         video = cv2.VideoCapture(id_cam)  # Inicia la captura de video desde la cámara
 
@@ -19,30 +24,46 @@ def evaluate_model(model, threshold=0.7):
 
             # Realiza la detección con MediaPipe y extrae los puntos clave
             image, results = mediapipe_detection(frame, hands_model)
-            keypoint_sequence.append(extract_keypoints(results))
+            keypoints = np.array([[res.x, res.y, res.z] for res in results.multi_hand_landmarks[
+                0].landmark]).flatten() if results.multi_hand_landmarks else np.zeros(
+                21 * 3)  # Extrae los puntos clave de la primera mano detectada
+            keypoint_sequence.append(keypoints)
 
             # Verifica si la secuencia de puntos clave tiene la longitud suficiente
-            if len(keypoint_sequence) > MAX_LENGTH_FRAMES and there_hand(results):
-                count_frame += 1
-            else:
-                if count_frame >= MIN_LENGTH_FRAMES:
-                    # Realiza la predicción del modelo con la secuencia de puntos clave
-                    res = model.predict(np.expand_dims(keypoint_sequence[-MAX_LENGTH_FRAMES:], axis=0))[0]
+            if len(keypoint_sequence) > max_length_frames and results.multi_hand_landmarks is not None:
+                # Realiza la predicción del modelo con la secuencia de puntos clave
+                res = model.predict(np.expand_dims(keypoint_sequence[-max_length_frames:], axis=0))[0]
 
-                    if res[np.argmax(res)] > threshold:
-                        sent = actions[np.argmax(res)]
+                if res[np.argmax(res)] > threshold:
+                    sent = actions[np.argmax(res)]
+                    if sent == "nn":
+                        sent = "ñ"
+                    if len(sentence) == 0 or (len(sentence) > 0 and sentence[0] != sent):
                         sentence.insert(0, sent)  # Inserta la acción detectada en la oración
-                        # text_to_speech(sent)  # Convierte la acción a habla (comentado)
-                        sentence, repe_sent = format_letter(sent, sentence, repe_sent)  # Formatea la oración
+                        sentence = sentence[:10]  # Limita la longitud de la oración a 10 caracteres
 
-                    count_frame = 0
-                    keypoint_sequence = []
+                keypoint_sequence = []
 
             # Dibuja la interfaz gráfica
-            cv2.rectangle(image, (0, 0), (640, 35), (245, 117, 16), -1)
-            cv2.putText(image, ' | '.join(sentence), FONT_POS, FONT, FONT_SIZE, (255, 255, 255))
+            height, width, _ = image.shape
+            cv2.rectangle(image, (0, 0), (width, 50), (50, 50, 50), -1)  # Fondo gris oscuro
+            display_sentence = ' '.join(sentence)
+            cv2.putText(image, display_sentence,
+                        (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, (255, 255, 255), 2, cv2.LINE_AA)  # Texto blanco
 
-            draw_keypoints(image, results)  # Dibuja los puntos clave en la imagen
+            if results.multi_hand_landmarks:  # Si se detectaron manos
+                for hand_landmarks in results.multi_hand_landmarks:  # Itera sobre cada mano detectada
+                    draw_landmarks(
+                        image,
+                        hand_landmarks,
+                        HAND_CONNECTIONS,
+                        # Especificaciones de dibujo para los puntos
+                        DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
+                        # Especificaciones de dibujo para las conexiones
+                        DrawingSpec(color=(121, 44, 250), thickness=2, circle_radius=2),
+                    )
+
             cv2.imshow('Sign Language Translator', image)  # Muestra la imagen en una ventana
             if cv2.waitKey(10) & 0xFF == ord('q'):  # Permite salir del bucle presionando 'q'
                 break
@@ -52,7 +73,7 @@ def evaluate_model(model, threshold=0.7):
 
 
 if __name__ == "__main__":
-    # Se carga qel modelO
-    model_path = os.path.join(DYNAMIC_MODEL_DIR, MODEL_NAME)
-    lstm_model = load_model(model_path)  # Carga el modelo entrenado desde el archivo
-    evaluate_model(lstm_model)  # Inicia la evaluación del modelo
+    # Se carga el modelo
+    model_path = os.path.join(dynamic_model_dir, dynamic_model_name)
+    dynamic_model = load_model(model_path)  # Carga el modelo entrenado desde el archivo
+    evaluate_dynamic_model(dynamic_model)  # Inicia la evaluación del modelo

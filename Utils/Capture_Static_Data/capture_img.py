@@ -4,7 +4,8 @@ import mediapipe as mp
 import numpy as np
 import math
 import time
-from Constants.constants import id_cam, STATIC_DATA_WITH_OUT_P_DIR
+from Constants.constants import id_cam, static_data_with_out_p_dir
+
 # Inicializar Mediapipe Hands para detección y procesamiento de manos
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=1)  # Detectar hasta una mano
@@ -14,7 +15,7 @@ mp_drawing = mp.solutions.drawing_utils  # Utilidades para dibujar las marcas de
 id_camara = cv2.VideoCapture(id_cam)
 offset = 20  # Desplazamiento para ajustar la caja delimitadora
 img_out_size = 224  # Tamaño de la imagen de salida
-dir = os.path.join(STATIC_DATA_WITH_OUT_P_DIR, "A")  # Cambiar la letra a guardar
+dir = os.path.join(static_data_with_out_p_dir, "A")  # Cambiar la letra a guardar
 img_count = 0  # Contador para las imágenes guardadas
 
 while True:

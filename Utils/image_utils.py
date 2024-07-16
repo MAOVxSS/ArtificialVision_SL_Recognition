@@ -1,9 +1,9 @@
 """
-Métodos para la manipulación de imagenes
+Métodos para la manipulación de imagenes y mediapipe
 """
-
 import numpy as np
 import math
+import cv2
 
 
 # Función para realizar preprocesar la imagen recortada
@@ -42,3 +42,13 @@ def binarize_img(original_img, hsv_image):
                     (hsv_image[i, j, 2] > 56 and hsv_image[i, j, 2] < 186):
                 img_bin[i, j] = 255
     return img_bin
+
+
+# Función para procesar la imagen con MediaPipe y detectar manos
+def mediapipe_detection(image, model):
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convierte la imagen de BGR a RGB
+    image.flags.writeable = False  # Optimiza la velocidad de procesamiento
+    results = model.process(image)  # Procesa la imagen con el modelo de MediaPipe
+    image.flags.writeable = True  # Vuelve a permitir escritura en la imagen
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # Convierte la imagen de vuelta a BGR
+    return image, results  # Devuelve la imagen procesada y los resultados

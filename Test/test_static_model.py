@@ -5,7 +5,7 @@ import math
 import os
 import keras
 from Utils.image_utils import preprocess_image, binarize_img
-from Constants.constants import id_cam, labels, STATIC_MODEL_DIR
+from Constants.constants import id_cam, labels, static_model_dir
 
 # Inicializar Mediapipe Hands
 mp_hands = mp.solutions.hands
@@ -18,7 +18,7 @@ offset = 20  # Desplazamiento para ajustar la caja delimitadora
 img_size = 224  # Tamaño de la imagen de salida
 
 # Cargar el modelo
-model_path = os.path.join(STATIC_MODEL_DIR, "static_model.keras")
+model_path = os.path.join(static_model_dir, "static_model.keras")
 model = keras.models.load_model(model_path)
 
 while True:
