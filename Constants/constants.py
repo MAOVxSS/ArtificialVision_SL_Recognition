@@ -20,7 +20,7 @@ static_model_v3_labels_dir = os.path.abspath(
     os.path.join(root_dir, "Static_Data", "KeyPoints", "keypoints_labels.csv"))
 static_model_v3_tflite = os.path.abspath(
     os.path.join(root_dir, "Model", "Generated_Models", "keypoint_classifier.tflite"))
-
+static_model_name = "static_keypoint.keras"
 # ------------------------
 # Variables |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # Static Model------------

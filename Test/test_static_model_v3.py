@@ -1,9 +1,10 @@
 import cv2
+import os
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import mediapipe as mp
-from Constants.constants import static_model_v3_labels_dir, id_cam
+from Constants.constants import static_model_v3_labels_dir, id_cam, static_model_dir, static_model_name
 
 # Cargar el archivo de etiquetas predefinido
 labels_df = pd.read_csv(static_model_v3_labels_dir, header=None, index_col=0)
@@ -15,7 +16,8 @@ hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_c
 mp_drawing = mp.solutions.drawing_utils
 
 # Cargar el modelo .keras
-model = tf.keras.models.load_model('../Model/Generated_Models/static_keypoint.keras')
+model_path = os.path.join(static_model_dir, static_model_name)
+model = tf.keras.models.load_model(model_path)
 
 def predict_keypoints(keypoints):
     input_data = np.array(keypoints, dtype=np.float32).reshape(1, 21 * 2)
